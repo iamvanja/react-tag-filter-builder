@@ -30,6 +30,9 @@ export type ClassNames = {
   topBar?: string;
   helperText?: string;
   removeAllButton?: string;
+  chipList?: string;
+  chip?: string;
+  editedChip?: string;
 };
 
 export type PublicAPI = {

@@ -2,9 +2,8 @@ import React, { forwardRef, useCallback, useEffect, useRef } from "react";
 import { AutoComplete } from "./Autocomplete";
 import { Step, QueryPart, Column, ClassNames, PublicAPI } from "../types";
 import { getPropsPerStep } from "../utils";
-import { Chip } from "./Chip";
+import { ChipRenderer } from "./Chip";
 import { Button } from "./Button";
-import { ChevronLeft } from "lucide-react";
 import { cn } from "../utils";
 
 import { GlobalContext } from "../contexts";
@@ -12,6 +11,7 @@ import { usePrivateAPI } from "../hooks/usePrivateAPI";
 import { Debug, DebugRenderer } from "./Debug";
 import { TopBar, TopBarRenderer } from "./TopBar";
 import { usePublicAPI } from "../hooks";
+import { ChipList, ChipListRenderer } from "./ChipList";
 
 type QueryBuilderProps = {
   columns: Column[];
@@ -24,6 +24,8 @@ type QueryBuilderProps = {
   shouldFocusOnMount?: boolean;
   renderDebug?: DebugRenderer;
   renderTopBar?: TopBarRenderer;
+  renderChipList?: ChipListRenderer;
+  renderChip?: ChipRenderer;
 };
 const LS_QUERY_PARTS_KEY = "filter";
 
@@ -40,18 +42,20 @@ const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
       shouldFocusOnMount = false,
       renderDebug,
       renderTopBar,
+      renderChipList,
+      renderChip,
     },
     ref?
   ) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+    const chipRefs = useRef<HTMLButtonElement[]>([]);
+
     const privateAPIref = usePrivateAPI({
       initialFilter,
       shouldPersistData,
       localStorageKey,
       onFilterChange,
     });
-    const inputRef = useRef<HTMLInputElement>(null);
-    const chipRefs = useRef<(HTMLDivElement | null)[]>([]);
-
     const publicAPI = usePublicAPI({ inputRef });
 
     if (ref) {
@@ -129,58 +133,6 @@ const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
       inputRef.current?.focus();
     };
 
-    const handleRemoveQueryPart = (index: number) => {
-      privateAPIref.current.setQueryParts(
-        privateAPIref.current.state.queryParts.filter((_, i) => i !== index)
-      );
-      inputRef.current?.focus();
-    };
-
-    const handleEditQueryPart = (index: number) => {
-      const partToEdit = privateAPIref.current.state.queryParts[index];
-      privateAPIref.current.setCurrentQueryPart(partToEdit);
-      privateAPIref.current.setInputValue(partToEdit.column);
-      privateAPIref.current.setCurrentStep(Step.column);
-      privateAPIref.current.setEditedChipIndex(index);
-      inputRef.current?.focus();
-    };
-
-    const handleChipFocused = useCallback(
-      ({
-        index,
-        position,
-      }: {
-        index?: number;
-        position: "first" | "last" | "prev" | "next";
-      }) => {
-        const chipCount = chipRefs?.current?.length ?? 0;
-        let nextIndex: number | undefined;
-
-        if (position === "first") {
-          nextIndex = 0;
-        } else if (position === "last") {
-          nextIndex = chipCount - 1;
-        } else if (position === "prev" && index !== undefined) {
-          nextIndex = index - 1;
-        } else if (position === "next" && index !== undefined) {
-          nextIndex = index + 1;
-        }
-
-        if (
-          nextIndex !== undefined &&
-          nextIndex > -1 &&
-          nextIndex <= chipCount - 1
-        ) {
-          chipRefs.current[nextIndex]?.focus();
-          return;
-        }
-
-        privateAPIref.current.setFocusedChipIndex(-1);
-        inputRef.current?.focus();
-      },
-      [privateAPIref]
-    );
-
     const handleGoBack = useCallback(() => {
       const { currentStep, currentQueryPart } = privateAPIref.current.state;
       const { setCurrentStep, setCurrentQueryPart, setInputValue } =
@@ -211,124 +163,65 @@ const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
           e.preventDefault();
           handleGoBack();
         }
-        if (
-          privateAPIref.current.state.currentStep === Step.column &&
-          privateAPIref.current.state.inputValue === ""
-        ) {
-          if (e.key === "ArrowLeft") {
-            e.preventDefault();
-            handleChipFocused({ position: "last" });
-          }
-          if (e.key === "ArrowRight") {
-            e.preventDefault();
-            handleChipFocused({ position: "first" });
-          }
-        }
       },
-      [handleChipFocused, handleGoBack, privateAPIref]
+      [handleGoBack, privateAPIref]
     );
 
-    const handleChipKeyDown = (
-      e: React.KeyboardEvent<HTMLDivElement>,
-      index: number
-    ) => {
-      const keyActions: { [key: string]: () => void } = {
-        Backspace: () => handleRemoveQueryPart(index),
-        Delete: () => handleRemoveQueryPart(index),
-        Enter: () => handleEditQueryPart(index),
-        ArrowLeft: () => handleChipFocused({ index, position: "prev" }),
-        ArrowRight: () => handleChipFocused({ index, position: "next" }),
-        Tab: () => {
-          if (e.shiftKey) {
-            handleChipFocused({ index, position: "prev" });
-          } else {
-            handleChipFocused({ index, position: "next" });
-          }
-        },
-      };
-
-      if (keyActions[e.key]) {
-        e.preventDefault();
-        keyActions[e.key]();
-      }
-    };
-
     return (
-      <GlobalContext.Provider value={{ inputRef, privateAPIref, classNames }}>
-        <div className={cn("w-full relative", classNames.root)}>
+      <GlobalContext.Provider
+        value={{ inputRef, chipRefs, privateAPIref, classNames }}
+      >
+        <div className={cn("w-full", classNames.root)}>
           {isDebug && <Debug render={renderDebug} />}
 
           <TopBar render={renderTopBar} />
 
           {/* todo: MainRow component, handle focus/blur styling */}
-          <div className="flex flex-wrap items-center gap-1 p-1 border rounded-md">
-            {privateAPIref.current.state.queryParts.map((part, index) => (
-              <Chip
-                isInProgress={
-                  index === privateAPIref.current.state.editedChipIndex
-                }
-                key={`query-part-${index}`}
-                column={part.column}
-                comparator={part.comparator}
-                value={part.value}
-                onDelete={() => handleRemoveQueryPart(index)}
-                ref={(el) => {
-                  if (el) {
-                    chipRefs.current[index] = el;
-                  }
-                }}
-                tabIndex={0}
-                onKeyDown={(e) => handleChipKeyDown(e, index)}
-                onFocus={() => privateAPIref.current.setFocusedChipIndex(index)}
-              />
-            ))}
-            {privateAPIref.current.state.currentQueryPart.column &&
-              privateAPIref.current.state.editedChipIndex === null && (
-                <Chip
-                  isInProgress
-                  column={privateAPIref.current.state.currentQueryPart.column}
-                  comparator={
-                    privateAPIref.current.state.currentQueryPart.comparator
-                  }
-                  value={privateAPIref.current.state.currentQueryPart.value}
-                />
-              )}
+          <div className="border rounded-md pl-1 pt-1">
+            <ChipList render={renderChipList} renderItem={renderChip} />
 
-            <div className="relative flex-grow flex items-center gap-1">
-              {privateAPIref.current.state.currentStep !== Step.column && (
-                <Button variant="ghost" size="sm" onClick={handleGoBack}>
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-              )}
-              <AutoComplete
-                tabIndex={0}
-                value={privateAPIref.current.state.inputValue}
-                ref={inputRef}
-                onChange={handleInputChange}
-                onSelectionChange={handleSelectionChange}
-                rootClassName="max-w-[240px]"
-                onKeyDown={handleKeyDown}
-                {...getPropsPerStep(
-                  privateAPIref.current.state.currentStep,
-                  columns,
-                  privateAPIref.current.state.currentColumn
+            <div className="relative inline-block">
+              <div className="relative flex-grow flex items-center gap-1 w-[300px]">
+                {privateAPIref.current.state.currentStep !== Step.column && (
+                  <Button
+                    className="text-lg border"
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleGoBack}
+                  >
+                    &lsaquo; {/* <ChevronLeft className="h-4 w-4" /> */}
+                  </Button>
                 )}
-              />
-              {privateAPIref.current.state.currentStep === "value" && (
-                <Button
-                  className="px-7"
-                  size="icon"
-                  onClick={() =>
-                    handleSelectionChange(
-                      privateAPIref.current.state.inputValue
-                    )
-                  }
-                >
-                  {privateAPIref.current.state.editedChipIndex !== null
-                    ? "Update"
-                    : "Add"}
-                </Button>
-              )}
+                <AutoComplete
+                  tabIndex={0}
+                  value={privateAPIref.current.state.inputValue}
+                  ref={inputRef}
+                  onChange={handleInputChange}
+                  onSelectionChange={handleSelectionChange}
+                  rootClassName="max-w-[240px]"
+                  onKeyDown={handleKeyDown}
+                  {...getPropsPerStep(
+                    privateAPIref.current.state.currentStep,
+                    columns,
+                    privateAPIref.current.state.currentColumn
+                  )}
+                />
+                {privateAPIref.current.state.currentStep === "value" && (
+                  <Button
+                    className="px-7"
+                    size="icon"
+                    onClick={() =>
+                      handleSelectionChange(
+                        privateAPIref.current.state.inputValue
+                      )
+                    }
+                  >
+                    {privateAPIref.current.state.editedChipIndex !== null
+                      ? "Update"
+                      : "Add"}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </div>
