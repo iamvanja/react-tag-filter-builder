@@ -28,7 +28,7 @@ export const DefaultChipList: ChipListRenderer = ({
       {...chipListProps}
       role="list"
     >
-      {chips.map((chip, index) => (
+      {chips.map((_, index) => (
         <li
           className={cn("inline", classNames.chip)}
           key={`query-part-li-${index}`}

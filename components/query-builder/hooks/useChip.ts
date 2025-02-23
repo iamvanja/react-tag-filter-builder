@@ -69,9 +69,11 @@ export const useChip = (index: number): useChipState => {
     );
     inputRef.current?.focus();
   };
+
   const onFocus = (index: number) => {
     privateAPIref.current.setFocusedChipIndex(index);
   };
+
   const onEdit = (index: number) => {
     const partToEdit = privateAPIref.current.state.queryParts[index];
     privateAPIref.current.setCurrentQueryPart(partToEdit);

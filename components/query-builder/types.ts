@@ -33,6 +33,14 @@ export type ClassNames = {
   chipList?: string;
   chip?: string;
   editedChip?: string;
+
+  inputRoot?: string;
+  input?: string;
+  inputBackButton?: string;
+  inputOKButton?: string;
+
+  dropdownList?: string;
+  dropdownListItem?: string;
 };
 
 export type PublicAPI = {

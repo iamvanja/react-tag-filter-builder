@@ -3,7 +3,7 @@ import { GlobalContext, GlobalContextValue } from "../contexts";
 import { X } from "lucide-react";
 import { cn } from "../utils";
 import { ClassNames } from "../types";
-import { useChip } from "../hooks/useChip";
+import { useChip } from "../hooks";
 
 type ChipRendererProps = {
   classNames: ClassNames;
@@ -41,6 +41,7 @@ export const DefaultChip: ChipRenderer = ({
 }: ChipRendererProps) => {
   return (
     <button
+      type="button"
       className={cn(
         "query-builder-chip inline-flex items-center rounded-full border px-2.5 py-2 mr-1 mb-1 text-xs font-semibold transition-colors focus:outline-none focus:ring-1 focus:ring-ring focus:ring-offset-1",
         {

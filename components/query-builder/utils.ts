@@ -49,37 +49,46 @@ const getValueFields = (column: Column | null) => {
   return column?.options ?? customFields ?? [];
 };
 
-const getPropsPerStep = (
+export const getFieldsPerStep = (
   step: Step,
   columns: Column[],
   currentColumn: Column | null
 ) => {
   switch (step) {
     case Step.column:
+      return columns.map((column) => column.name);
+    case Step.comparator:
+      return getComparatorsPerInputType(currentColumn?.inputType);
+    case Step.value:
+    // intentional fallthrough
+    default:
+      return getValueFields(currentColumn);
+  }
+};
+
+export const getPropsPerStep = (step: Step, currentColumn: Column | null) => {
+  switch (step) {
+    case Step.column:
       return {
         placeholder: "Select a column name...",
-        fields: columns.map((column) => column.name),
       };
     case Step.comparator:
       return {
         placeholder: "Select a comparator...",
-        fields: getComparatorsPerInputType(currentColumn?.inputType),
       };
     case Step.value:
     // intentional fallthrough
     default:
-      const fields = getValueFields(currentColumn);
+      const fields = getValueFields(currentColumn); //todo (remove)
       return {
         placeholder: "Enter a value and press Enter...",
         fields,
-        allowNoMatchSelection: !fields.length,
+        allowNoMatchSelection: !fields.length, // todo
         type: getValueInputType(currentColumn?.inputType),
       };
   }
 };
 
-function cn(...inputs: ClassValue[]) {
+export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-export { getPropsPerStep, cn };

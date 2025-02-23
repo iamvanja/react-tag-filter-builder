@@ -1,0 +1,68 @@
+import React, { useContext, useEffect } from "react";
+import { GlobalContext, GlobalContextValue } from "../contexts";
+import { ClassNames } from "../types";
+import { cn } from "../utils";
+import {
+  DropdownListItem,
+  DropdownListItemRenderer,
+  DefaultDropdownListItem,
+} from "./DropdownListItem";
+import { useDropdownList } from "../hooks";
+
+type DropdownListRendererProps = React.ComponentPropsWithRef<"ul"> & {
+  suggestions: string[];
+  classNames: ClassNames;
+  renderItem: DropdownListItemRenderer;
+};
+
+export type DropdownListRenderer = (
+  props: DropdownListRendererProps
+) => React.JSX.Element;
+
+export const DefaultDropdownList: DropdownListRenderer = ({
+  classNames,
+  suggestions,
+  ref,
+  renderItem,
+}) => {
+  return (
+    <ul
+      className={cn(
+        "absolute mt-[2px] left-0 right-0 z-10 bg-popover text-popover-foreground border rounded-md shadow-lg max-h-60 overflow-auto",
+        classNames.dropdownList
+      )}
+      ref={ref}
+    >
+      {suggestions.map((_, index) => (
+        <DropdownListItem
+          key={`dropdown-list-item-${index}`}
+          index={index}
+          render={renderItem}
+        />
+      ))}
+    </ul>
+  );
+};
+
+export type DropdownListProps = {
+  render?: DropdownListRenderer;
+  renderItem?: DropdownListItemRenderer;
+};
+
+export const DropdownList = ({
+  render = DefaultDropdownList,
+  renderItem = DefaultDropdownListItem,
+}: DropdownListProps) => {
+  const context = useContext(GlobalContext) || ({} as GlobalContextValue);
+  const { classNames, privateAPIref } = context;
+  const dropdownListProps = useDropdownList();
+  const shouldRender =
+    privateAPIref.current.state.isInputFocused &&
+    privateAPIref.current.state.suggestions.length > 0;
+
+  if (!shouldRender) {
+    return null;
+  }
+
+  return render({ classNames, renderItem, ...dropdownListProps });
+};
