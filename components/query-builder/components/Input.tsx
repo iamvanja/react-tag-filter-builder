@@ -25,7 +25,6 @@ const DefaultInput: InputRenderer = ({
 }) => {
   return (
     <div className={classNames.inputRoot}>
-      {/* todo: renderBackButton */}
       {showBackButton && (
         <button
           onClick={onGoBack}
@@ -36,7 +35,6 @@ const DefaultInput: InputRenderer = ({
         </button>
       )}
 
-      {/* todo: render input */}
       <input
         {...inputProps}
         value={value}
@@ -46,7 +44,6 @@ const DefaultInput: InputRenderer = ({
         })}
       />
 
-      {/* todo: renderOKButton */}
       {showOKButton && (
         <button
           onClick={() => onSelectionChange(value as string)}
@@ -63,12 +60,16 @@ const DefaultInput: InputRenderer = ({
 
 export type InputProps = {
   render?: InputRenderer;
+  shouldFocusOnMount?: boolean;
 };
 
-export const Input = ({ render = DefaultInput }: InputProps) => {
+export const Input = ({
+  render = DefaultInput,
+  shouldFocusOnMount = true,
+}: InputProps) => {
   const context = useContext(GlobalContext) || ({} as GlobalContextValue);
   const { classNames } = context;
-  const inputProps = useInput();
+  const inputProps = useInput({ shouldFocusOnMount });
 
   return render({
     classNames,

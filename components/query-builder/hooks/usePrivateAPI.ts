@@ -35,6 +35,8 @@ export type PrivateAPI = {
   updateSuggestions: (value?: string) => void;
   setFocusedSuggestionIndex: React.Dispatch<React.SetStateAction<number>>;
   handleGoBack: () => void;
+  onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onInputKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 export type UsePrivateAPIState = PrivateAPI & {
@@ -47,6 +49,8 @@ export type PrivateAPIProps = {
   shouldPersistData: boolean;
   localStorageKey: string;
   onFilterChange?: (queryParts: QueryPart[]) => void;
+  onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onInputKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 const usePrivateAPI = ({
@@ -55,6 +59,8 @@ const usePrivateAPI = ({
   shouldPersistData,
   localStorageKey,
   onFilterChange,
+  onInputChange,
+  onInputKeyDown,
 }: PrivateAPIProps): React.RefObject<UsePrivateAPIState> => {
   const ref = useRef<UsePrivateAPIState>(null!);
   const [inputValue, setInputValue] = useState("");
@@ -76,8 +82,6 @@ const usePrivateAPI = ({
   const [suggestions, setSuggestions] = useState<string[]>(
     getFieldsPerStep(currentStep, columns, currentColumn)
   );
-  // todo: remove fields
-  const fields = getFieldsPerStep(currentStep, columns, currentColumn);
   const [focusedSuggestionIndex, setFocusedSuggestionIndex] = useState(-1);
 
   // Set initial state if persisting data from localStorage. Using useEffect because to avoid the SSR hydration issues
@@ -194,6 +198,7 @@ const usePrivateAPI = ({
     setInputFocused,
     setSuggestions,
     updateSuggestions: (value) => {
+      const fields = getFieldsPerStep(currentStep, columns, currentColumn);
       const filteredSuggestions: string[] =
         value && value.length > 0
           ? fields.filter((col) =>
@@ -205,6 +210,8 @@ const usePrivateAPI = ({
     },
     setFocusedSuggestionIndex,
     handleGoBack,
+    onInputChange,
+    onInputKeyDown,
   };
 
   ref.current = { ...api, state };

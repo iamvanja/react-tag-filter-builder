@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from "react";
+import React, { forwardRef, useRef } from "react";
 import { QueryPart, Column, ClassNames, PublicAPI } from "../types";
 import { ChipRenderer } from "./Chip";
 
@@ -18,6 +18,8 @@ type QueryBuilderProps = {
   isDebug?: boolean;
   classNames?: ClassNames;
   onFilterChange?: (queryParts: QueryPart[]) => void;
+  onInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onInputKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   initialFilter?: QueryPart[];
   localStorageKey?: string;
   shouldPersistData?: boolean;
@@ -72,6 +74,8 @@ const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
       isDebug = false,
       classNames = defaultClassnames,
       onFilterChange,
+      onInputChange,
+      onInputKeyDown,
       initialFilter = [],
       localStorageKey = LS_QUERY_PARTS_KEY,
       shouldPersistData = false,
@@ -99,6 +103,8 @@ const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
       shouldPersistData,
       localStorageKey,
       onFilterChange,
+      onInputChange,
+      onInputKeyDown,
     });
     const publicAPI = usePublicAPI({ inputRef });
 
@@ -109,20 +115,6 @@ const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
         ref.current = publicAPI;
       }
     }
-
-    // todo: move
-    useEffect(() => {
-      if (shouldFocusOnMount) {
-        inputRef?.current?.focus();
-      }
-
-      // unfocus chip when focused outside the input
-      if (inputRef?.current === document.activeElement) {
-        privateAPIref.current.setFocusedChipIndex(-1);
-      }
-
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     return (
       <GlobalContext.Provider
@@ -145,7 +137,10 @@ const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
             <ChipList render={renderChipList} renderItem={renderChip} />
 
             <div className={classNames.comboBox}>
-              <Input render={renderInput} />
+              <Input
+                render={renderInput}
+                shouldFocusOnMount={shouldFocusOnMount}
+              />
 
               <DropdownList
                 render={renderDropdownList}

@@ -79,16 +79,16 @@ export const getPropsPerStep = (step: Step, currentColumn: Column | null) => {
     case Step.value:
     // intentional fallthrough
     default:
-      const fields = getValueFields(currentColumn); //todo (remove)
+      const fields = getValueFields(currentColumn);
       return {
         placeholder: "Enter a value and press Enter...",
         fields,
-        allowNoMatchSelection: !fields.length, // todo
+        allowNoMatchSelection: !fields.length,
         type: getValueInputType(currentColumn?.inputType),
       };
   }
 };
 
-export function cn(...inputs: ClassValue[]) {
+export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
-}
+};

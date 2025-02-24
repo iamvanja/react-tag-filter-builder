@@ -1,4 +1,4 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { GlobalContext, GlobalContextValue } from "../contexts";
 import { Step } from "../types";
 
@@ -9,23 +9,41 @@ export type useInputState = {
   onSelectionChange: (selectedItem: string) => void;
 } & React.ComponentPropsWithRef<"input">;
 
-export const useInput = (): useInputState => {
+export type UseInputArgs = {
+  shouldFocusOnMount: boolean;
+};
+
+export const useInput = ({
+  shouldFocusOnMount,
+}: UseInputArgs): useInputState => {
   const context = useContext(GlobalContext) || ({} as GlobalContextValue);
   const { privateAPIref, inputRef } = context;
 
   const { allowNoMatchSelection, ...inputProps } =
     privateAPIref.current.inputPropsPerStep();
 
-  const value = privateAPIref.current.state.inputValue;
+  useEffect(() => {
+    if (shouldFocusOnMount) {
+      inputRef?.current?.focus();
+    }
+
+    // unfocus chip when focused outside the input
+    if (inputRef?.current === document.activeElement) {
+      privateAPIref.current.setFocusedChipIndex(-1);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     privateAPIref.current.setInputValue(value);
 
-    // todo: debounce this
     privateAPIref.current.updateSuggestions(value);
 
-    // props?.onChange() // todo
+    if (privateAPIref.current.onInputChange) {
+      privateAPIref.current.onInputChange(e);
+    }
   };
 
   const onSelectionChange = (suggestion: string) => {
@@ -41,8 +59,6 @@ export const useInput = (): useInputState => {
         handleGoBack,
         state,
       } = privateAPIref.current;
-      // allow parent component to still implement its onKeyDown event
-      // props.onKeyDown?.(e); // todo
 
       if (e.key === "ArrowDown") {
         e.preventDefault();
@@ -63,18 +79,21 @@ export const useInput = (): useInputState => {
         if (finalValue) {
           onSelectionChange(finalValue);
         }
-      }
-
-      if (e.key === "Backspace" && state.inputValue === "") {
+      } else if (e.key === "Backspace" && state.inputValue === "") {
         e.preventDefault();
         handleGoBack();
+      }
+
+      // allow parent component to still implement its onKeyDown event
+      if (privateAPIref.current.onInputKeyDown) {
+        privateAPIref.current.onInputKeyDown(e);
       }
     },
     [privateAPIref, allowNoMatchSelection]
   );
 
   return {
-    value,
+    value: privateAPIref.current.state.inputValue,
     ref: inputRef,
     onKeyDown,
     onChange,
