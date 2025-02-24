@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import { ClassNames } from "../../types";
 import { GlobalContext, GlobalContextValue } from "../../contexts";
-import { cn } from "../../utils";
 import { DefaultHelperText, DefaultHelperTextProps } from "./DefaultHelperText";
 import { DefaultRemoveAllButton } from "./DefaultRemoveAllButton";
 
@@ -19,7 +18,7 @@ export const DefaultTopBar: TopBarRenderer = ({
   ...props
 }) => {
   return (
-    <div className={cn(classNames?.topBar)}>
+    <div className={classNames?.topBar}>
       <DefaultHelperText {...props} className={classNames?.helperText} />
 
       {showRemoveAllButton && onRemoveAll && (

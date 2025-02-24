@@ -1,7 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from "react";
 import { QueryPart, Column, ClassNames, PublicAPI } from "../types";
 import { ChipRenderer } from "./Chip";
-import { cn } from "../utils";
 
 import { GlobalContext } from "../contexts";
 import { usePrivateAPI } from "../hooks/usePrivateAPI";
@@ -12,6 +11,7 @@ import { ChipList, ChipListRenderer } from "./ChipList";
 import { Input, InputRenderer } from "./Input";
 import { DropdownList, DropdownListRenderer } from "./DropdownList";
 import { DropdownListItemRenderer } from "./DropdownListItem";
+import { MainRow, MainRowRenderer } from "./MainRow";
 
 type QueryBuilderProps = {
   columns: Column[];
@@ -29,6 +29,7 @@ type QueryBuilderProps = {
   renderInput?: InputRenderer;
   renderDropdownList?: DropdownListRenderer;
   renderDropdownListItem?: DropdownListItemRenderer;
+  renderMainRow?: MainRowRenderer;
 };
 const LS_QUERY_PARTS_KEY = "filter";
 
@@ -59,6 +60,9 @@ export const defaultClassnames: ClassNames = {
   dropdownList: "query-builder-dropdown-list",
   dropdownListItem: "query-builder-dropdown-list-item",
   dropdownListItemActive: "query-builder-dropdown-list-item-active",
+  mainRow: "query-builder-main-row",
+  mainRowIsActive: "query-builder-main-row-is-active",
+  comboBox: "query-builder-combo-box",
 };
 
 const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
@@ -79,9 +83,11 @@ const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
       renderInput,
       renderDropdownList,
       renderDropdownListItem,
+      renderMainRow,
     },
     ref?
   ) => {
+    const mainRowRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const chipRefs = useRef<HTMLButtonElement[]>([]);
     const suggestionDropdownRef = useRef<HTMLUListElement>(null!);
@@ -121,6 +127,7 @@ const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
     return (
       <GlobalContext.Provider
         value={{
+          mainRowRef,
           inputRef,
           chipRefs,
           suggestionDropdownRef,
@@ -129,17 +136,15 @@ const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
           classNames,
         }}
       >
-        <div className={cn(classNames.root)}>
+        <div className={classNames.root}>
           {isDebug && <Debug render={renderDebug} />}
 
           <TopBar render={renderTopBar} />
 
-          {/* todo: MainRow component, handle focus/blur styling */}
-          <div className="border rounded-md pl-1 pt-1">
+          <MainRow render={renderMainRow}>
             <ChipList render={renderChipList} renderItem={renderChip} />
 
-            {/* todo: Combobox */}
-            <div className="relative inline-block">
+            <div className={classNames.comboBox}>
               <Input render={renderInput} />
 
               <DropdownList
@@ -147,7 +152,7 @@ const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
                 renderItem={renderDropdownListItem}
               />
             </div>
-          </div>
+          </MainRow>
         </div>
       </GlobalContext.Provider>
     );

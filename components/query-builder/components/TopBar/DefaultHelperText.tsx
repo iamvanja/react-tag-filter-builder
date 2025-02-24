@@ -1,5 +1,4 @@
 import { QueryPart, Step } from "../../types";
-import { cn } from "../../utils";
 
 export type DefaultHelperTextProps = {
   step: Step;
@@ -35,5 +34,5 @@ export const DefaultHelperText = ({
   className,
   ...props
 }: DefaultHelperTextProps) => {
-  return <div className={cn(className)}>{getText(props)}</div>;
+  return <div className={className}>{getText(props)}</div>;
 };

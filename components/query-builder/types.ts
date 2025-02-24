@@ -53,6 +53,11 @@ export type ClassNames = {
   dropdownList?: string;
   dropdownListItem?: string;
   dropdownListItemActive?: string;
+
+  mainRow?: string;
+  mainRowIsActive?: string;
+
+  comboBox?: string;
 };
 
 export type PublicAPI = {

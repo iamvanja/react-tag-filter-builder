@@ -1,7 +1,6 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { GlobalContext, GlobalContextValue } from "../contexts";
 import { ClassNames } from "../types";
-import { cn } from "../utils";
 import {
   DropdownListItem,
   DropdownListItemRenderer,
@@ -26,7 +25,7 @@ export const DefaultDropdownList: DropdownListRenderer = ({
   renderItem,
 }) => {
   return (
-    <ul className={cn(classNames.dropdownList)} ref={ref}>
+    <ul className={classNames.dropdownList} ref={ref}>
       {suggestions.map((_, index) => (
         <DropdownListItem
           key={`dropdown-list-item-${index}`}

@@ -3,6 +3,7 @@ import { UsePrivateAPIState } from "../hooks";
 import { ClassNames } from "../types";
 
 export type GlobalContextValue = {
+  mainRowRef: React.RefObject<HTMLDivElement | null>;
   privateAPIref: React.RefObject<UsePrivateAPIState>;
   inputRef: React.RefObject<HTMLInputElement | null>;
   chipRefs: React.RefObject<HTMLButtonElement[]>;

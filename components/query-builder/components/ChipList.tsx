@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { GlobalContext, GlobalContextValue } from "../contexts";
 import { ClassNames, QueryPart } from "../types";
 import { Chip, ChipRenderer, DefaultChip } from "./Chip";
-import { cn } from "../utils";
 
 type ChipListRendererProps = React.ComponentPropsWithRef<"ul"> & {
   classNames: ClassNames;
@@ -23,10 +22,10 @@ export const DefaultChipList: ChipListRenderer = ({
   ...chipListProps
 }: ChipListRendererProps) => {
   return (
-    <ul className={cn(classNames.chipList)} {...chipListProps} role="list">
+    <ul className={classNames.chipList} {...chipListProps} role="list">
       {chips.map((_, index) => (
         <li
-          className={cn(classNames.chipListItem)}
+          className={classNames.chipListItem}
           key={`query-part-li-${index}`}
           role="listitem"
         >
@@ -35,7 +34,7 @@ export const DefaultChipList: ChipListRenderer = ({
       ))}
 
       {showChipInProgress && (
-        <li className={cn(classNames.chipListItemEdited)} role="listitem">
+        <li className={classNames.chipListItemEdited} role="listitem">
           <Chip render={renderItem} index={-1} />
         </li>
       )}

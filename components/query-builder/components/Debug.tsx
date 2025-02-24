@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { GlobalContext, GlobalContextValue } from "../contexts";
-import { cn } from "../utils";
 
 type DebugRendererProps = {
   state: object;
@@ -9,7 +8,7 @@ type DebugRendererProps = {
 export type DebugRenderer = (props: DebugRendererProps) => React.JSX.Element;
 
 export const DefaultDebug: DebugRenderer = ({ state, className }) => {
-  return <pre className={cn(className)}>{JSON.stringify(state, null, 2)}</pre>;
+  return <pre className={className}>{JSON.stringify(state, null, 2)}</pre>;
 };
 
 type DebugProps = {

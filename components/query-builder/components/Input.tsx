@@ -24,13 +24,13 @@ const DefaultInput: InputRenderer = ({
   ...inputProps
 }) => {
   return (
-    <div className={cn(classNames.inputRoot)}>
+    <div className={classNames.inputRoot}>
       {/* todo: renderBackButton */}
       {showBackButton && (
         <button
           onClick={onGoBack}
           type="button"
-          className={cn(classNames.inputBackButton)}
+          className={classNames.inputBackButton}
         >
           &lsaquo;
         </button>
@@ -52,7 +52,7 @@ const DefaultInput: InputRenderer = ({
           onClick={() => onSelectionChange(value as string)}
           // todo: submit button when validation is implemented
           type="button"
-          className={cn(classNames.inputOKButton)}
+          className={classNames.inputOKButton}
         >
           OK
         </button>
