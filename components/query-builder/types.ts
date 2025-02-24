@@ -31,16 +31,28 @@ export type ClassNames = {
   helperText?: string;
   removeAllButton?: string;
   chipList?: string;
+  chipListItem?: string;
+  chipListItemEdited?: string;
   chip?: string;
-  editedChip?: string;
+  chipInProgress?: string;
+  chipSkeleton?: string;
+  chipSkeletonComparator?: string;
+  chipSkeletonValue?: string;
+  chipColumn?: string;
+  chipComparator?: string;
+  chipValue?: string;
+  chipDelete?: string;
 
   inputRoot?: string;
   input?: string;
   inputBackButton?: string;
   inputOKButton?: string;
+  inputBackButtonShown?: string;
+  inputOKButtonShown?: string;
 
   dropdownList?: string;
   dropdownListItem?: string;
+  dropdownListItemActive?: string;
 };
 
 export type PublicAPI = {

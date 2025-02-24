@@ -32,12 +32,41 @@ type QueryBuilderProps = {
 };
 const LS_QUERY_PARTS_KEY = "filter";
 
+export const defaultClassnames: ClassNames = {
+  root: "query-builder-root",
+  debug: "query-builder-debug",
+  topBar: "query-builder-top-bar",
+  helperText: "query-builder-helper-text",
+  removeAllButton: "query-builder-remove-all-button",
+  chipList: "query-builder-chip-list",
+  chipListItem: "query-builder-chip-list-item",
+  chipListItemEdited: "query-builder-chip-list-item-edited",
+  chip: "query-builder-chip",
+  chipInProgress: "query-builder-chip-in-progress",
+  chipColumn: "query-builder-chip-column",
+  chipComparator: "query-builder-chip-comparator",
+  chipValue: "query-builder-chip-value",
+  chipDelete: "query-builder-chip-delete",
+  chipSkeleton: "query-builder-chip-skeleton",
+  chipSkeletonComparator: "query-builder-chip-skeleton-comparator",
+  chipSkeletonValue: "query-builder-chip-skeleton-value",
+  inputRoot: "query-builder-input-root",
+  inputBackButton: "query-builder-input-back-button",
+  inputOKButton: "query-builder-input-ok-button",
+  input: "query-builder-input",
+  inputBackButtonShown: "query-builder-input-back-button-shown",
+  inputOKButtonShown: "query-builder-input-ok-button-shown",
+  dropdownList: "query-builder-dropdown-list",
+  dropdownListItem: "query-builder-dropdown-list-item",
+  dropdownListItemActive: "query-builder-dropdown-list-item-active",
+};
+
 const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
   (
     {
       columns,
       isDebug = false,
-      classNames = {},
+      classNames = defaultClassnames,
       onFilterChange,
       initialFilter = [],
       localStorageKey = LS_QUERY_PARTS_KEY,
@@ -100,7 +129,7 @@ const QueryBuilder = forwardRef<PublicAPI, QueryBuilderProps>(
           classNames,
         }}
       >
-        <div className={cn("w-full", classNames.root)}>
+        <div className={cn(classNames.root)}>
           {isDebug && <Debug render={renderDebug} />}
 
           <TopBar render={renderTopBar} />

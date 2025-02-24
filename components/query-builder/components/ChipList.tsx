@@ -23,14 +23,10 @@ export const DefaultChipList: ChipListRenderer = ({
   ...chipListProps
 }: ChipListRendererProps) => {
   return (
-    <ul
-      className={cn("inline", classNames.chipList)}
-      {...chipListProps}
-      role="list"
-    >
+    <ul className={cn(classNames.chipList)} {...chipListProps} role="list">
       {chips.map((_, index) => (
         <li
-          className={cn("inline", classNames.chip)}
+          className={cn(classNames.chipListItem)}
           key={`query-part-li-${index}`}
           role="listitem"
         >
@@ -39,7 +35,7 @@ export const DefaultChipList: ChipListRenderer = ({
       ))}
 
       {showChipInProgress && (
-        <li className={cn("inline", classNames.editedChip)} role="listitem">
+        <li className={cn(classNames.chipListItemEdited)} role="listitem">
           <Chip render={renderItem} index={-1} />
         </li>
       )}

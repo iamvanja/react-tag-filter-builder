@@ -35,9 +35,5 @@ export const DefaultHelperText = ({
   className,
   ...props
 }: DefaultHelperTextProps) => {
-  return (
-    <div className={cn("mt-2 text-sm text-muted-foreground", className)}>
-      {getText(props)}
-    </div>
-  );
+  return <div className={cn(className)}>{getText(props)}</div>;
 };

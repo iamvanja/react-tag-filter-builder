@@ -1,5 +1,3 @@
-import { Button } from "../Button";
-
 export type DefaultRemoveAllButtonProps = {
   onRemoveAll: () => void;
   className?: string;
@@ -10,13 +8,8 @@ export const DefaultRemoveAllButton = ({
   onRemoveAll,
 }: DefaultRemoveAllButtonProps) => {
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      className={className}
-      onClick={onRemoveAll}
-    >
+    <button className={className} onClick={onRemoveAll}>
       Remove All
-    </Button>
+    </button>
   );
 };

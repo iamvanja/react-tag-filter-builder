@@ -50,5 +50,7 @@ export const useDropdownList = (): useDropdownListState => {
   return {
     suggestions: privateAPIref.current.state.suggestions,
     ref: suggestionDropdownRef,
+    role: "listbox",
+    tabIndex: -1,
   };
 };

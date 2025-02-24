@@ -19,9 +19,7 @@ export const DefaultTopBar: TopBarRenderer = ({
   ...props
 }) => {
   return (
-    <div
-      className={cn("mb-1 flex justify-between items-end", classNames?.topBar)}
-    >
+    <div className={cn(classNames?.topBar)}>
       <DefaultHelperText {...props} className={classNames?.helperText} />
 
       {showRemoveAllButton && onRemoveAll && (

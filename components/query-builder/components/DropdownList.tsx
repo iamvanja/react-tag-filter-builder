@@ -26,13 +26,7 @@ export const DefaultDropdownList: DropdownListRenderer = ({
   renderItem,
 }) => {
   return (
-    <ul
-      className={cn(
-        "absolute mt-[2px] left-0 right-0 z-10 bg-popover text-popover-foreground border rounded-md shadow-lg max-h-60 overflow-auto",
-        classNames.dropdownList
-      )}
-      ref={ref}
-    >
+    <ul className={cn(classNames.dropdownList)} ref={ref}>
       {suggestions.map((_, index) => (
         <DropdownListItem
           key={`dropdown-list-item-${index}`}

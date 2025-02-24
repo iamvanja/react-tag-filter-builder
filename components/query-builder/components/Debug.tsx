@@ -9,16 +9,7 @@ type DebugRendererProps = {
 export type DebugRenderer = (props: DebugRendererProps) => React.JSX.Element;
 
 export const DefaultDebug: DebugRenderer = ({ state, className }) => {
-  return (
-    <pre
-      className={cn(
-        "text-xs margin-auto overflow-auto max-h-[200px] mb-2",
-        className
-      )}
-    >
-      {JSON.stringify(state, null, 2)}
-    </pre>
-  );
+  return <pre className={cn(className)}>{JSON.stringify(state, null, 2)}</pre>;
 };
 
 type DebugProps = {

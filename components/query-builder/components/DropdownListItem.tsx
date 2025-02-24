@@ -20,9 +20,8 @@ export const DefaultDropdownListItem: DropdownListItemRenderer = ({
   return (
     <li
       {...props}
-      className={cn("px-4 py-2 cursor-pointer", classNames.dropdownListItem, {
-        "bg-accent text-accent-foreground": isActive,
-        "hover:bg-accent hover:text-accent-foreground": !isActive,
+      className={cn(classNames.dropdownListItem, {
+        [classNames.dropdownListItemActive ?? ""]: isActive,
       })}
     />
   );
@@ -54,5 +53,7 @@ export const DropdownListItem = ({
       inputRef.current?.focus();
     },
     onMouseEnter: () => privateAPIref.current.setFocusedSuggestionIndex(index),
+    role: "option",
+    tabIndex: -1,
   });
 };

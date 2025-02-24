@@ -5,7 +5,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/components/query-builder/utils";
 import { useRef, useState } from "react";
 import { ListFilter } from "lucide-react";
-import { QueryBuilderAPI } from "@/components/query-builder/components/QueryBuilder";
+import {
+  defaultClassnames,
+  QueryBuilderAPI,
+} from "@/components/query-builder/components/QueryBuilder";
 
 export default function Page() {
   const [isDebug, setIsDebug] = useState(true);
@@ -107,7 +110,8 @@ export default function Page() {
               columns={columns as Column[]}
               isDebug={isDebug}
               classNames={{
-                root: "mt-4",
+                ...defaultClassnames,
+                root: cn(defaultClassnames.root, "mt-4"),
               }}
             />
           </div>
