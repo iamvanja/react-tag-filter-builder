@@ -111,7 +111,6 @@ const usePrivateAPI = ({
   };
 
   const setQueryParts = (queryParts: QueryPart[]) => {
-    console.log("set query parts", queryParts);
     _setQueryParts(queryParts);
 
     if (onFilterChange) {
