@@ -1,13 +1,19 @@
-import { QueryPart, Step } from "./types";
+import { QueryPart, Step } from "../../types";
 
-type ChipProps = {
+export type DefaultHelperTextProps = {
   step: Step;
   column?: QueryPart["column"];
   comparator?: QueryPart["comparator"];
   isChipFocused?: boolean;
+  className?: string;
 };
 
-const getText = ({ isChipFocused, step, column, comparator }: ChipProps) => {
+export const getText = ({
+  isChipFocused,
+  step,
+  column,
+  comparator,
+}: DefaultHelperTextProps) => {
   if (isChipFocused) {
     return "Use backspace to delete. Enter to edit. Left/Right Arrows or Tab/Shift+Tab to navigate between chips and the new filter input.";
   }
@@ -24,10 +30,9 @@ const getText = ({ isChipFocused, step, column, comparator }: ChipProps) => {
   }
 };
 
-const HelperText: React.FC<ChipProps> = (props) => {
-  return (
-    <div className="mt-2 text-sm text-muted-foreground">{getText(props)}</div>
-  );
+export const DefaultHelperText = ({
+  className,
+  ...props
+}: DefaultHelperTextProps) => {
+  return <div className={className}>{getText(props)}</div>;
 };
-
-export { HelperText };

@@ -1,4 +1,6 @@
 import { Step, InputType, Column } from "./types";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 const defaultComparators = ["equals", "contains", "begins with", "ends with"];
 const stringComparators = ["equals", "contains", "begins with", "ends with"];
@@ -47,21 +49,32 @@ const getValueFields = (column: Column | null) => {
   return column?.options ?? customFields ?? [];
 };
 
-const getPropsPerStep = (
+export const getFieldsPerStep = (
   step: Step,
   columns: Column[],
   currentColumn: Column | null
 ) => {
   switch (step) {
     case Step.column:
+      return columns.map((column) => column.name);
+    case Step.comparator:
+      return getComparatorsPerInputType(currentColumn?.inputType);
+    case Step.value:
+    // intentional fallthrough
+    default:
+      return getValueFields(currentColumn);
+  }
+};
+
+export const getPropsPerStep = (step: Step, currentColumn: Column | null) => {
+  switch (step) {
+    case Step.column:
       return {
         placeholder: "Select a column name...",
-        fields: columns.map((column) => column.name),
       };
     case Step.comparator:
       return {
         placeholder: "Select a comparator...",
-        fields: getComparatorsPerInputType(currentColumn?.inputType),
       };
     case Step.value:
     // intentional fallthrough
@@ -76,4 +89,6 @@ const getPropsPerStep = (
   }
 };
 
-export { getPropsPerStep };
+export const cn = (...inputs: ClassValue[]) => {
+  return twMerge(clsx(inputs));
+};
